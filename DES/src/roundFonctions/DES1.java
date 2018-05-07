@@ -9,10 +9,10 @@ public class DES1 {
 	
 	
 	//DES roundFonction with missing P
-	public Boolean[] DES(Boolean[] input, Boolean[] key) {
+	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
 		
 		// E-Table step
-		Boolean[] output = roundFonctionSteps.ETable(input);
+		Boolean[][] output = roundFonctionSteps.ETable(input);
 		// XOR step
 		output = roundFonctionSteps.XOR(output, key);
 		// S-box step
