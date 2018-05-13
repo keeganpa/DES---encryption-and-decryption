@@ -71,12 +71,24 @@ public class RoundFonctionSteps {
 		Boolean[][] output = new Boolean[inputRows][inputCols];
 		for (int i = 0; i < inputRows; i++) {
 			for (int j = 0; j < inputCols; j++) {
-				output[i][j+1] = input[i][j];
+				if (j<15) {
+					output[i][j+1] = input[i][j];
+				} else {
+					output[i][0] = input[i][j];
+				}
 				if (j == 0) {
-					output[i][-1] = input[i+1][0];
+					if (i<3) {
+						output[i][output[0].length-1] = input[i+1][0];
+					} else {
+						output[i][output[0].length-1] = input[0][0];
+					}
 				}
 				if (j == inputCols - 1) {
-					output[i][0] = input[i-1][j];
+					if (i>0) {
+						output[i][0] = input[i-1][j];
+					} else {
+						output[i][0] = input[input.length-1][j];
+					}
 				}
 			}
 		}
@@ -90,7 +102,7 @@ public class RoundFonctionSteps {
 		Boolean[][] output = new Boolean[inputRows][inputCols];
 		for (int i = 0; i < inputRows; i++) {
 			for (int j = 0; j < inputCols; j++) {
-				output[i][j] = input[i][j] ^ key[j + i*inputCols];
+				output[i][j] = input[i][j] ^ key[(j + i*inputCols) % 56];
 			}
 		}
 		return output;
@@ -113,10 +125,14 @@ public class RoundFonctionSteps {
 	private Boolean[] DoSBOX(int i, Boolean[][] input) {
 		int inputCols = input[0].length;
 		Boolean[] line = {false, false, false, false};
-		int num = SBOX[i][2*boolToInt(input[i][0])+boolToInt(input[i][-1])][8*boolToInt(input[i][1])+4*boolToInt(input[i][2])+2*boolToInt(input[i][3])+boolToInt(input[i][4])];
+		int num = SBOX[i][2*boolToInt(input[i][0])+boolToInt(input[i][input[0].length-1])%SBOX[0].length][(8*boolToInt(input[i][1])+4*boolToInt(input[i][2])+2*boolToInt(input[i][3])+boolToInt(input[i][0]))%SBOX[0][0].length];
 		for (int j = 0; j < inputCols - 2; j++ ) {
 			if (num/(Math.pow(2, 3 - j)) > 1) {
-				line[j] = true;
+				if (j<4) {
+					line[j] = true;
+				} else {
+					line[0] = true;
+				}
 				num -= Math.pow(2, 3 - j);
 			}
 		}
@@ -144,7 +160,7 @@ public class RoundFonctionSteps {
 			for (int i = 0; i < inputRows; i++) {
 				for (int j = 0; j < inputCols; j++) {
 					int num = P[i][j] - 1;
-					output[i][j] = input[(num - num % 4) / 4][num % 4];
+					output[i][j] = input[((num - num % 4) / 4)%input.length][(num % 4)%input[0].length];
 				}
 			}
 			return output;

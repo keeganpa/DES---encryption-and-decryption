@@ -54,16 +54,16 @@ public class Application
                 switch(j)
                 {
                     case 0: p = d0.DES(p, key);
-                            pi = d0.DES(p, key);
+                            pi = d0.DES(pi, key);
                             break;
                     case 1: p = d1.DES(p, key);
-                            pi = d1.DES(p, key);
+                            pi = d1.DES(pi, key);
                             break;
                     case 2: p = d2.DES(p, key);
-                            pi = d2.DES(p, key);
+                            pi = d2.DES(pi, key);
                             break;
                     case 3: p = d3.DES(p, key);
-                            pi = d3.DES(p, key);
+                            pi = d3.DES(pi, key);
                             break;
                 }
                 diff[j][i] = getDifference(p, pi);
