@@ -58,6 +58,7 @@ public class Application
                 {
                     case 0: p = d0.DES(p, key);
                             pi = d0.DES(pi, key);
+                            System.out.println("newcase");
                             break;
                     case 1: p = d1.DES(p, key);
                             pi = d1.DES(pi, key);

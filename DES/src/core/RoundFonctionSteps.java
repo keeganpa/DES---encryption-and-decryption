@@ -68,26 +68,21 @@ public class RoundFonctionSteps {
 	public Boolean[][] ETable(Boolean[][] input) {
 		int inputRows = input.length;
 		int inputCols = input[0].length;
-		Boolean[][] output = new Boolean[inputRows][inputCols];
+		Boolean[][] output = new Boolean[inputRows][inputCols+2];
 		for (int i = 0; i < inputRows; i++) {
 			for (int j = 0; j < inputCols; j++) {
-				if (j<15) {
-					output[i][j+1] = input[i][j];
-				} else {
-					output[i][0] = input[i][j];
-				}
+				output[i][j+1] = input[i][j];
 				if (j == 0) {
-					if (i<3) {
-						output[i][output[0].length-1] = input[i+1][0];
+					if (i == 0) {
+						output[i][j] = input[inputRows - 1][inputCols - 1];
 					} else {
-						output[i][output[0].length-1] = input[0][0];
+						output[i][j] = input[i-1][inputCols - 1];
 					}
-				}
-				if (j == inputCols - 1) {
-					if (i>0) {
-						output[i][0] = input[i-1][j];
+				} else if (j == inputCols - 1){
+					if (i == inputRows - 1) {
+						output[i][j+2] = input[0][inputCols - 1];
 					} else {
-						output[i][0] = input[input.length-1][j];
+						output[i][j+2] = input[i+1][inputCols - 1];
 					}
 				}
 			}
@@ -107,17 +102,32 @@ public class RoundFonctionSteps {
 		}
 		return output;
 	}
+	public Boolean[][] XOR(Boolean[][] block1, Boolean[][] block2) {
+		int inputRows = block1.length;
+		int inputCols = block1[0].length;
+		Boolean[][] output = new Boolean[inputRows][inputCols];
+		for (int i = 0; i < inputRows; i++) {
+			for (int j = 0; j < inputCols; j++) {
+				output[i][j] = block1[i][j] ^ block2[i][j];
+			}
+		}
+		return output;
+	}
 	
 	//SBox step
 	public Boolean[][] SBox(Boolean[][] input) {
 		int inputRows = input.length;
 		int inputCols = input[0].length;
+		//System.out.println(input.length);
+		//System.out.println(input[0].length);
 		Boolean[][] output = new Boolean[inputRows][inputCols - 2];
 
 		for (int i = 0; i < inputRows; i++) {
 			//We take care of the S-boxes one by one 
 			output[i] = DoSBOX(i, input);
 		}
+		//System.out.println(output.length);
+		//System.out.println(output[0].length);
 		return output;
 	}
 	
@@ -153,18 +163,18 @@ public class RoundFonctionSteps {
 	}
 	
 	//Permutation step
-		public Boolean[][] P(Boolean[][] input) {
-			int inputRows = input.length;
-			int inputCols = input[0].length;
-			Boolean[][] output = new Boolean[inputRows][inputCols];
-			for (int i = 0; i < inputRows; i++) {
-				for (int j = 0; j < inputCols; j++) {
-					int num = P[i][j] - 1;
-					output[i][j] = input[((num - num % 4) / 4)%input.length][(num % 4)%input[0].length];
-				}
+	public Boolean[][] P(Boolean[][] input) {
+		int inputRows = input.length;
+		int inputCols = input[0].length;
+		Boolean[][] output = new Boolean[inputRows][inputCols];
+		for (int i = 0; i < inputRows; i++) {
+			for (int j = 0; j < inputCols; j++) {
+				int num = P[i][j] - 1;
+				output[i][j] = input[((num - num % 4) / 4)%input.length][(num % 4)%input[0].length];
 			}
-			return output;
 		}
+		return output;
+	}
 	
 		
 		

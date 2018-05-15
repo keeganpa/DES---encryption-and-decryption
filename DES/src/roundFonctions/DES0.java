@@ -8,9 +8,14 @@ public class DES0 {
 	
 	//original DES roundFonction
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
+		System.out.println("DES0");
+		//todo initial permutation
 		
+		Boolean[][] block1 = java.util.Arrays.copyOfRange(input, 0, 2);
+		Boolean[][] block2 = java.util.Arrays.copyOfRange(input, 2, 4);
+
 		// E-Table step
-		Boolean[][] output = roundFonctionSteps.ETable(input);
+		Boolean[][] output = roundFonctionSteps.ETable(block2);
 		// XOR step
 		output = roundFonctionSteps.XOR(output, key);
 		// S-box step
@@ -18,6 +23,11 @@ public class DES0 {
 		// permutation step
 		output = roundFonctionSteps.P(output);
 		
+		block1 = block2;
+		block2 = roundFonctionSteps.XOR(block1, output);
+		
+		
+		//todo inver initial permutation
 		return output;
 	}
 }
