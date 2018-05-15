@@ -6,6 +6,7 @@ public class Application
 {
     Boolean[][] input;
     Boolean[] key;
+    String mode;
     String plaintext;
     String keyString;
     String ciphertext;
@@ -13,35 +14,37 @@ public class Application
     
     public static void main(String[] args)
     {
-        Scanner keyboard = new Scanner(System.in);
-        System.out.println("Please enter: e for encryption, d for decryption");
         Application app = new Application();
-        String s = keyboard.next();
-        switch(s)
-        {
-            case "e": app.encrypt(args);
-                      break;
-            case "d": app.decrypt(args);
-                      break;
-            default:  System.out.println("Invalid Selection");
-                      break;
-        }
+        app.run(args);
     }
 
-    public void encrypt(String[] args)
+    public void run(String[] args)
+    {
+        readData(args);
+        if(mode.equals("0"))
+        {
+            encrypt();
+        }
+        else
+        {
+            decrypt();
+        }
+    }
+    
+    public void encrypt()
     {
         String output = "ENCRYPTION\n";
         DES0 d0 = new DES0();
         DES1 d1 = new DES1();
         DES2 d2 = new DES2();
         DES3 d3 = new DES3();
-        readData(args);
+        
         output += "Plaintext P: " + plaintext;
         output += "\nKey K: " + keyString;
         
         int[][] diff = new int[4][17];
 
-        String output2 = "Avalanche:\nP and Pi under K\n";
+        String output2 = "\nAvalanche:\nP and Pi under K\n";
         
         for(int j = 0; j < 4; j++)
         {
@@ -68,10 +71,45 @@ public class Application
                 }
                 diff[j][i] = getDifference(p, pi);
             }
+            if(j == 0)
+            {
+                output += "\nCiphertext C: " + plaintext(p);
+                System.out.println(output + output2);
+            }
+        }
+        System.out.println("Round     DES0     DES1     DES2     DES3");
+        for(int i = 0; i < 17; i++)
+        {
+            String out = ("    " + i);
+            for(int j = 0; j < 4; j++)
+            {
+                out += ("       " + diff[j][i]);
+            }
+            System.out.println(out);
         }
     }
     
-    public void decrypt(String[] args)
+    public String plaintext(Boolean[][] input)
+    {
+        String output = "";
+        for(int i = 0; i < input.length; i++)
+        {
+            for(int j = 0; j < input[0].length; j++)
+            {
+                if(input[i][j] == false)
+                {
+                    output += "0";
+                }
+                else
+                {
+                    output += "1";
+                }
+            }
+        }
+        return output;
+    }
+    
+    public void decrypt()
     {
         DES0 d0 = new DES0();
         DES1 d1 = new DES1();
@@ -100,6 +138,8 @@ public class Application
         
         if(success != false)
         {
+            current = inputStream.next();
+            mode = current;
             current = inputStream.next();
             plaintext = current;
             String[] split = current.split("");
@@ -151,9 +191,9 @@ public class Application
     public int getDifference(Boolean[][] p, Boolean[][] pi)
     {
         int count = 0;
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < p.length; i++)
         {
-            for(int j = 0; j < 16; j++)
+            for(int j = 0; j < p[0].length; j++)
             {
                  if(p[i][j] != pi[i][j])
                  {
