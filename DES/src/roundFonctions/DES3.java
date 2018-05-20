@@ -17,7 +17,7 @@ public class DES3 {
 		Boolean[][] block2 = java.util.Arrays.copyOfRange(input, 8, 16);
 		
 		for (int i = 0; i < 16; i++) {
-			block1 = block2;
+			Boolean[][] newBlock1 = block2;
 			// E-Table step
 			Boolean[][] output = roundFonctionSteps.ETable(block2);
 			// XOR step
@@ -26,6 +26,8 @@ public class DES3 {
 			output = roundFonctionSteps.E1Table(output);
 			
 			block2 = roundFonctionSteps.XOR(block1, output);
+			
+			block1 = newBlock1;
 		}
 		
 		Boolean[][] output = new Boolean[16][4];
