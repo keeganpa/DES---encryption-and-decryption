@@ -8,7 +8,6 @@ public class DES0 {
 	
 	//original DES roundFonction
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
-		System.out.println("DES0");
 		input = roundFonctionSteps.P(input, 2);
 		
 		//separation in 2 blocks

@@ -10,7 +10,6 @@ public class DES2 {
 	
 	//DES roundFonction with S-box replaced by E-1 table step
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
-		System.out.println("DES2");
 		input = roundFonctionSteps.P(input, 2);
 				
 		//separation in 2 blocks

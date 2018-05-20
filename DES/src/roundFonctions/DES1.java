@@ -10,7 +10,6 @@ public class DES1 {
 	
 	//DES roundFonction with missing P
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
-		System.out.println("DES1");
 		input = roundFonctionSteps.P(input, 2);
 		
 		//separation in 2 blocks
