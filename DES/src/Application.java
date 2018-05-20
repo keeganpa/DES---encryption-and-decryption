@@ -122,9 +122,8 @@ public class Application
     {
         boolean success = true;
         Scanner inputStream = null;
-        String current;        
-        input = new Boolean[4][16];
-        key = new Boolean[56];
+        String current;
+        input = new Boolean[16][4];
         
         try
         {
@@ -145,9 +144,9 @@ public class Application
             plaintext = current;
             String[] split = current.split("");
             int count = 0;
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < 16; i++)
             {
-                for(int j = 0; j < 16; j++)
+                for(int j = 0; j < 4; j++)
                 {
                     switch(split[count])
                     {
@@ -163,7 +162,8 @@ public class Application
             current = inputStream.next();
             keyString = current;
             String[] keySplit = current.split("");
-            for(int i = 0; i < 56; i++)
+            key = new Boolean[keySplit.length];
+            for(int i = 0; i < keySplit.length; i++)
             {
                 switch(keySplit[i])
                 {
@@ -178,10 +178,10 @@ public class Application
     
     public Boolean[][] copyInput()
     {
-        Boolean[][] copy = new Boolean[4][16];
-        for(int i = 0; i < 4; i++)
+        Boolean[][] copy = new Boolean[16][4];
+        for(int i = 0; i < 16; i++)
         {
-            for(int j = 0; j < 16; j++)
+            for(int j = 0; j < 4; j++)
             {
                  copy[i][j] = input[i][j];   
             }
