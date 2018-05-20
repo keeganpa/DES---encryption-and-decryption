@@ -195,8 +195,8 @@ public class RoundFonctionSteps {
 		int inputCols = input[0].length;
 		Boolean[][] output = new Boolean[inputRows][inputCols - 2];
 		for (int i = 0; i < inputRows; i++) {
-			for (int j = 1; j < inputCols - 1; j++) {
-				output[i][j] = input[i][j];
+			for (int j = 0; j < inputCols - 2; j++) {
+				output[i][j] = input[i][j+1];
 			}
 		}
 		return output;
@@ -206,8 +206,6 @@ public class RoundFonctionSteps {
 	public Boolean[][] P(Boolean[][] input, int permutation) {
 		int inputRows = input.length;
 		int inputCols = input[0].length;
-		System.out.println(input.length);
-		System.out.println(input[0].length);
 		Boolean[][] output = new Boolean[inputRows][inputCols];
 		for (int i = 0; i < inputRows; i++) {
 			for (int j = 0; j < inputCols; j++) {
@@ -226,9 +224,6 @@ public class RoundFonctionSteps {
 						num = 0;
 						break;
 				}
-				
-				System.out.println((num - num % inputCols) / inputCols);
-				System.out.println(num % inputCols);
 				output[i][j] = input[(num - num % inputCols) / inputCols][num % inputCols];
 			}
 		}

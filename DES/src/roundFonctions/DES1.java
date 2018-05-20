@@ -12,15 +12,15 @@ public class DES1 {
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
 		System.out.println("DES1");
 		input = roundFonctionSteps.P(input, 2);
-				
+		
 		//separation in 2 blocks
-		Boolean[][] block1 = java.util.Arrays.copyOfRange(input, 0, 2);
-		Boolean[][] block2 = java.util.Arrays.copyOfRange(input, 2, 4);
+		Boolean[][] block1 = java.util.Arrays.copyOfRange(input, 0, 8);
+		Boolean[][] block2 = java.util.Arrays.copyOfRange(input, 8, 16);
 		
 		for (int i = 0; i < 16; i++) {
 			block1 = block2;
 			// E-Table step
-			Boolean[][] output = roundFonctionSteps.ETable(input);
+			Boolean[][] output = roundFonctionSteps.ETable(block2);
 			// XOR step
 			output = roundFonctionSteps.XOR(output, key);
 			// S-box step
