@@ -44,21 +44,21 @@ public class Application
         
         int[][] diff = new int[4][17];
 
-        String output2 = "\nAvalanche:\nP and Pi under K\n";
+        String output2 = "\nAvalanche:\nP and Pi under K";
         
         for(int j = 0; j < 4; j++)
         {
             Boolean[][] p = copyInput();
-            Boolean[][] pi = copyInput(); 
+            Boolean[][] pi = copyInput();
             pi[0][0] = !pi[0][0];
             diff[j][0] = getDifference(p, pi);
+            
             for(int i = 1; i <= 16; i++)
             {
                 switch(j)
                 {
                     case 0: p = d0.DES(p, key);
                             pi = d0.DES(pi, key);
-                            System.out.println("newcase");
                             break;
                     case 1: p = d1.DES(p, key);
                             pi = d1.DES(pi, key);
@@ -76,6 +76,46 @@ public class Application
             {
                 output += "\nCiphertext C: " + plaintext(p);
                 System.out.println(output + output2);
+            }
+        }
+        System.out.println("Round     DES0     DES1     DES2     DES3");
+        for(int i = 0; i < 17; i++)
+        {
+            String out = ("    " + i);
+            for(int j = 0; j < 4; j++)
+            {
+                out += ("       " + diff[j][i]);
+            }
+            System.out.println(out);
+        }
+        
+        System.out.println("\nP under K and Ki");
+        for(int j = 0; j < 4; j++)
+        {
+            Boolean[][] p = copyInput();
+            Boolean[][] pi = copyInput();
+            Boolean[] ki = copyKey();
+            ki[0] = !ki[0];
+            diff[j][0] = getDifference(p, pi);
+            
+            for(int i = 1; i <= 16; i++)
+            {
+                switch(j)
+                {
+                    case 0: p = d0.DES(p, key);
+                            pi = d0.DES(pi, ki);
+                            break;
+                    case 1: p = d1.DES(p, key);
+                            pi = d1.DES(pi, ki);
+                            break;
+                    case 2: p = d2.DES(p, key);
+                            pi = d2.DES(pi, ki);
+                            break;
+                    case 3: p = d3.DES(p, key);
+                            pi = d3.DES(pi, ki);
+                            break;
+                }
+                diff[j][i] = getDifference(p, pi);
             }
         }
         System.out.println("Round     DES0     DES1     DES2     DES3");
@@ -185,6 +225,16 @@ public class Application
             {
                  copy[i][j] = input[i][j];   
             }
+        }
+        return copy;
+    }
+    
+    public Boolean[] copyKey()
+    {
+        Boolean[] copy = new Boolean[key.length];
+        for(int i = 0; i < key.length; i++)
+        {
+            copy[i] = key[i];
         }
         return copy;
     }
