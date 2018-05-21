@@ -20,10 +20,16 @@ public class DES0 {
 			//prepare switching blocks at the end of the round
 			Boolean[][] newBlock1 = block2;
 			
+			//prepare key for round
+			key = roundFonctionSteps.rotateKey(key, i);
+			
+			//permute key
+			Boolean[] permutedKey = roundFonctionSteps.PK2(key);
+			
 			// E-Table step
 			Boolean[][] output = roundFonctionSteps.ETable(block2);
 			// XOR step
-			output = roundFonctionSteps.XOR(output, key);
+			output = roundFonctionSteps.XOR(output, permutedKey);
 			// S-box step
 			output = roundFonctionSteps.SBox(output);
 			// permutation step

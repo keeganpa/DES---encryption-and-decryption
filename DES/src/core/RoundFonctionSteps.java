@@ -107,6 +107,15 @@ public class RoundFonctionSteps {
 			{49, 17, 57, 25}
 		};
 	
+	//permutation matrix 2 for the key
+	private int[] pk2= {14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2,
+			41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32};
+	
+	
+	
+	
+	
+	
 	
 	//ETable step
 	public Boolean[][] ETable(Boolean[][] input) {
@@ -256,6 +265,72 @@ public class RoundFonctionSteps {
 		}
 		return output;
 	}
+	
+	//rotation of the key
+	public Boolean[] rotateKey(Boolean[] key, int round) {
+		Boolean[] key1 = java.util.Arrays.copyOfRange(key, 0, key.length/2);
+		Boolean[] key2 = java.util.Arrays.copyOfRange(key, key.length/2, key.length);
+		Boolean[] newKey1 = new Boolean[key1.length];
+		Boolean[] newKey2 = new Boolean[key2.length];
+		Boolean[] newKey = new Boolean[key.length];
+		//for the left shift by one bit
+		if (round == 0 || round == 1 || round == 8 || round == 15) {
+			for (int i = 0; i < key1.length; i++) {
+				//case of end of list
+				if (i == key1.length - 1) {
+					newKey1[key1.length - 1] = key1[0];
+					newKey2[key2.length - 1] = key2[0];
+				}
+				//common case
+				else {
+					newKey1[i] = key1[i + 1];
+					newKey2[i] = key2[i + 1];
+				}
+			}
+			//filling the new key
+			for (int i = 0; i < key1.length; i++) {
+				newKey[i] = newKey1[i];
+				newKey[i + newKey1.length] = newKey2[i];
+			}
+		}
+		//for the left shift by two bits
+		else {
+			for (int i = 0; i < key1.length; i++) {
+				//case of end of list
+				if (i == key1.length - 2) {
+					newKey1[key1.length - 2] = key1[0];
+					newKey2[key2.length - 2] = key2[0];
+				} else if (i == key1.length - 1){
+					newKey1[key1.length - 1] = key1[1];
+					newKey2[key2.length - 1] = key2[1];
+				}
+				//common case
+				else {
+					newKey1[i] = key1[i + 2];
+					newKey2[i] = key2[i + 2];
+				}
+			}
+			//filling the new key
+			for (int i = 0; i < key1.length; i++) {
+				newKey[i] = newKey1[i];
+				newKey[i + newKey1.length] = newKey2[i];
+			}
+		}
+		return newKey;
+	}
+	
+	//permutation 2 of the key
+	public Boolean[] PK2(Boolean[] key) {
+		Boolean[] newKey = key;
+		//filling the new key element by element
+		for (int i = 0; i < pk2.length; i++) {
+			int num = pk2[i] - 1;
+			newKey[i] = key[num];
+		}
+		return newKey;
+	}
+	
+	
 	
 		
 		
