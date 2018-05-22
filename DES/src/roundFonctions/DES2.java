@@ -13,7 +13,10 @@ public class DES2 {
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
 		//initial permutation
 		input = roundFonctionSteps.P(input, 2);
-				
+		
+		//initial key reduction
+		key = roundFonctionSteps.PK1(key);
+		
 		//separation in 2 blocks
 		Boolean[][] block1 = java.util.Arrays.copyOfRange(input, 0, 8);
 		Boolean[][] block2 = java.util.Arrays.copyOfRange(input, 8, 16);

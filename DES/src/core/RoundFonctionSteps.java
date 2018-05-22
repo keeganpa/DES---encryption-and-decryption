@@ -1,5 +1,7 @@
 package core;
 
+import java.util.Arrays;
+
 public class RoundFonctionSteps {
 	
 	//all the SBox we need
@@ -106,6 +108,10 @@ public class RoundFonctionSteps {
 			{33, 1, 41, 9},
 			{49, 17, 57, 25}
 		};
+	
+	//permutation matrix 1 for the key (reduction)
+	private int[] pk1 = {57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36,
+			63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4};
 	
 	//permutation matrix 2 for the key
 	private int[] pk2= {14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2,
@@ -315,6 +321,17 @@ public class RoundFonctionSteps {
 				newKey[i] = newKey1[i];
 				newKey[i + newKey1.length] = newKey2[i];
 			}
+		}
+		return newKey;
+	}
+	
+	//permutation 1 of the key (reduction)
+	public Boolean[] PK1(Boolean[] key) {
+		Boolean[] newKey = new Boolean[pk1.length];
+		//filling the new key element by element
+		for (int i = 0; i < pk1.length; i++) {
+			int num = pk1[i] - 1;
+			newKey[i] = key[num];
 		}
 		return newKey;
 	}

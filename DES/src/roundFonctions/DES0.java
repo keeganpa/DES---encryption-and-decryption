@@ -1,4 +1,6 @@
 package roundFonctions;
+import java.util.Arrays;
+
 import core.*;
 
 public class DES0 {
@@ -11,7 +13,10 @@ public class DES0 {
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
 		//initial permutation
 		input = roundFonctionSteps.P(input, 2);
-		
+
+		//initial key reduction
+		Boolean[] newKey = roundFonctionSteps.PK1(key);
+
 		//separation in 2 blocks
 		Boolean[][] block1 = java.util.Arrays.copyOfRange(input, 0, 8);
 		Boolean[][] block2 = java.util.Arrays.copyOfRange(input, 8, 16);
@@ -19,13 +24,13 @@ public class DES0 {
 		for (int i = 0; i < 16; i++) {
 			//prepare switching blocks at the end of the round
 			Boolean[][] newBlock1 = block2;
-			
+
 			//prepare key for round
-			key = roundFonctionSteps.rotateKey(key, i);
-			
+			newKey = roundFonctionSteps.rotateKey(newKey, i);
+
 			//permute key
-			Boolean[] permutedKey = roundFonctionSteps.PK2(key);
-			
+			Boolean[] permutedKey = roundFonctionSteps.PK2(newKey);
+
 			// E-Table step
 			Boolean[][] output = roundFonctionSteps.ETable(block2);
 			// XOR step
