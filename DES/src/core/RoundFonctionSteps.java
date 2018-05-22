@@ -145,9 +145,9 @@ public class RoundFonctionSteps {
 				//we also fill the last column of the extended matrix when j=numberofcolumn-1
 				else if (j == inputCols - 1){
 					if (i == inputRows - 1) {
-						output[i][j+2] = input[0][inputCols - 1];
+						output[i][j+2] = input[0][0];
 					} else {
-						output[i][j+2] = input[i+1][inputCols - 1];
+						output[i][j+2] = input[i+1][0];
 					}
 				}
 			}
