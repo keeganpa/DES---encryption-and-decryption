@@ -10,7 +10,6 @@ public class Application
     String plaintext;
     String keyString;
     String ciphertext;
-
     
     public static void main(String[] args)
     {
@@ -23,28 +22,30 @@ public class Application
         readData(args);
         if(mode.equals("0"))
         {
-            encrypt();
+            encrypt(args);
         }
         else
         {
-            decrypt();
+            decrypt(args);
         }
     }
     
-    public void encrypt()
+    public void encrypt(String[] args)
     {
-        String output = "ENCRYPTION\n";
+        String finalout = "";
+        String output = "ENCRYPTION\r\n";
         DES0 d0 = new DES0();
         DES1 d1 = new DES1();
         DES2 d2 = new DES2();
         DES3 d3 = new DES3();
         
         output += "Plaintext P: " + plaintext;
-        output += "\nKey K: " + keyString;
+        output += "\r\nKey K: " + keyString;
         
+        key = padKey();
         int[][] diff = new int[4][17];
 
-        String output2 = "\nAvalanche:\nP and Pi under K";
+        String output2 = "\r\nAvalanche:\r\nP and Pi under K";
         
         for(int j = 0; j < 4; j++)
         {
@@ -74,28 +75,46 @@ public class Application
             }
             if(j == 0)
             {
-                output += "\nCiphertext C: " + plaintext(p);
-                System.out.println(output + output2);
+                output += "\r\nCiphertext C: " + plaintext(p);
+                finalout += "\r\n" + output + output2;
             }
         }
-        System.out.println("Round     DES0     DES1     DES2     DES3");
+        finalout += "\r\nRound     DES0     DES1     DES2     DES3";
         for(int i = 0; i < 17; i++)
         {
-            String out = ("    " + i);
+            String out = ("   " + i);
             for(int j = 0; j < 4; j++)
             {
-                out += ("       " + diff[j][i]);
+                if(j == 0)
+                {
+                    out += (space(0, i)) + diff[j][i];
+                }
+                else
+                {
+                    out += (space(1, diff[j-1][i])) + diff[j][i];
+                }
             }
-            System.out.println(out);
+            finalout += "\r\n" + out;
         }
         
-        System.out.println("\nP under K and Ki");
+        double average = 0;
+        for(int i = 1; i < 17; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                average += diff[j][i];
+            }
+        }
+        average /= 64;
+        finalout += "\r\nAverage bit difference: " + average;
+        
+        finalout += "\r\n\r\nP under K and Ki";
         for(int j = 0; j < 4; j++)
         {
             Boolean[][] p = copyInput();
             Boolean[][] pi = copyInput();
             Boolean[] ki = copyKey();
-            ki[0] = !ki[0];
+            ki[1] = !ki[1];
             diff[j][0] = getDifference(p, pi);
             
             for(int i = 1; i <= 16; i++)
@@ -118,16 +137,36 @@ public class Application
                 diff[j][i] = getDifference(p, pi);
             }
         }
-        System.out.println("Round     DES0     DES1     DES2     DES3");
+        finalout += "\r\nRound     DES0     DES1     DES2     DES3";
         for(int i = 0; i < 17; i++)
         {
-            String out = ("    " + i);
+            String out = ("   " + i);
             for(int j = 0; j < 4; j++)
             {
-                out += ("       " + diff[j][i]);
+                if(j == 0)
+                {
+                    out += (space(0, i)) + diff[j][i];
+                }
+                else
+                {
+                    out += (space(1, diff[j-1][i])) + diff[j][i];
+                }
             }
-            System.out.println(out);
+            finalout += "\r\n" + out;
         }
+        
+        average = 0;
+        for(int i = 1; i < 17; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                average += diff[j][i];
+            }
+        }
+        average /= 64;
+        finalout += "\r\nAverage bit difference: " + average;
+        
+        outputData(args, finalout);
     }
     
     public String plaintext(Boolean[][] input)
@@ -150,12 +189,59 @@ public class Application
         return output;
     }
     
-    public void decrypt()
+    public void decrypt(String[] args)
     {
         DES0 d0 = new DES0();
-        DES1 d1 = new DES1();
-        DES2 d2 = new DES2();
-        DES3 d3 = new DES3();
+        Boolean[][] c = copyInput();
+        
+        String finalout = "DECRYPTION\r\nCiphertext C: ";
+        finalout += plaintext;
+        finalout += "\r\nKey K: ";
+        finalout += keyString;
+        key = padKey();
+        key = reverse(key);
+        
+        for(int i = 0; i <= 16; i++)
+        {
+            c = d0.DES(c, key);
+        }
+        
+        finalout += "\r\nPlaintext P: ";
+        finalout += plaintext(c);
+        
+        outputData(args, finalout);
+    }
+    
+    public Boolean[] reverse(Boolean[] k)
+    {
+        for(int i = 0; i < (k.length)/2; i++)
+        {
+            boolean temp = k[i];
+            k[i] = k[k.length-i-1];
+            k[k.length-i-1] = temp;
+        }
+        return k;
+    }
+    
+    public void outputData(String[] args, String output)
+    {
+        boolean success = true;
+        PrintWriter outputStream = null;  //Initiates the output stream
+        try
+        {
+            outputStream = new PrintWriter(args[1]);  //Attempts to start an output stream to the file name input by the user
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("Input filename not found");
+            success = false;
+        }
+        
+        if(success != false)
+        {
+            outputStream.print(output);
+            outputStream.close();
+        }
     }
    
     public void readData(String[] args)
@@ -238,6 +324,38 @@ public class Application
         }
         return copy;
     }
+        
+    public Boolean[] padKey()
+    {
+        Boolean[] padded = new Boolean[64];
+        int j = 0;
+        int onebits = 0;
+        for(int i = 1; i <= 64; i++)
+        {
+            if(i % 8 != 0)
+            {
+                padded[i-1] = key[j];
+                j++;
+                if(padded[i-1] == true)
+                {
+                    onebits++;
+                }
+            }
+            else
+            {
+                if(onebits % 2 != 0)
+                {
+                    padded[i-1] = false;
+                }
+                else
+                {
+                    padded[i-1] = true;
+                }
+                onebits = 0;
+            }
+        }
+        return padded;
+    }
     
     public int getDifference(Boolean[][] p, Boolean[][] pi)
     {
@@ -253,5 +371,31 @@ public class Application
             }
         }
         return count;
+    }
+    
+    public String space(int i, int j)
+    {
+        if(i == 0)
+        {
+            if(j < 10)
+            {
+                return "       ";
+            }
+            else
+            {
+                return "      ";
+            }
+        }
+        else
+        {
+            if(j < 10)
+            {
+                return "        ";
+            }
+            else
+            {
+                return "       ";
+            }
+        }
     }
 }
