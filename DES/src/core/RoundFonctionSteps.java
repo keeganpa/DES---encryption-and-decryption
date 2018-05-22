@@ -205,8 +205,9 @@ public class RoundFonctionSteps {
 		//dimension 2: row of the sboxi to use (get with bits 0 and 6 of the row(i) in input)
 		//dimension 3: column of the sboxi to use (get with bits 1, 2, 3, 4 of the row(i) in input)
 		int num = SBOX[i][2*boolToInt(input[i][0])+boolToInt(input[i][input[0].length-1])%SBOX[0].length][(8*boolToInt(input[i][1])+4*boolToInt(input[i][2])+2*boolToInt(input[i][3])+boolToInt(input[i][0]))%SBOX[0][0].length];
+		//System.out.println(num);
 		for (int j = 0; j < inputCols - 2; j++ ) {
-			
+			//System.out.println(num);
 			//putting the right value in line
 			if (num/(Math.pow(2, 3 - j)) > 1) {
 				if (j<4) {
@@ -217,6 +218,7 @@ public class RoundFonctionSteps {
 				num -= Math.pow(2, 3 - j);
 			}
 		}
+		//System.out.println(Arrays.toString(line));
 		return line;
 	}
 	
@@ -338,7 +340,7 @@ public class RoundFonctionSteps {
 	
 	//permutation 2 of the key
 	public Boolean[] PK2(Boolean[] key) {
-		Boolean[] newKey = key;
+		Boolean[] newKey = new Boolean[48];
 		//filling the new key element by element
 		for (int i = 0; i < pk2.length; i++) {
 			int num = pk2[i] - 1;

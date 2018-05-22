@@ -27,10 +27,8 @@ public class DES0 {
 
 			//prepare key for round
 			newKey = roundFonctionSteps.rotateKey(newKey, i, decryption);
-
 			//permute key
 			Boolean[] permutedKey = roundFonctionSteps.PK2(newKey);
-
 			// E-Table step
 			Boolean[][] output = roundFonctionSteps.ETable(block2);
 			// XOR step
