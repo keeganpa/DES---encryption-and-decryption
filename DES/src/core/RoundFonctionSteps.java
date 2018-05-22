@@ -273,14 +273,14 @@ public class RoundFonctionSteps {
 	}
 	
 	//rotation of the key
-	public Boolean[] rotateKey(Boolean[] key, int round) {
+	public Boolean[] rotateKey(Boolean[] key, int round, Boolean decryption) {
 		Boolean[] key1 = java.util.Arrays.copyOfRange(key, 0, key.length/2);
 		Boolean[] key2 = java.util.Arrays.copyOfRange(key, key.length/2, key.length);
 		Boolean[] newKey1 = new Boolean[key1.length];
 		Boolean[] newKey2 = new Boolean[key2.length];
 		Boolean[] newKey = new Boolean[key.length];
 		//for the left shift by one bit
-		if (round == 0 || round == 1 || round == 8 || round == 15) {
+		if (round == 0 || round == 15 || (decryption == false && (round == 8 || round == 1)) || (decryption == true && (round == 7 || round == 14))) {
 			for (int i = 0; i < key1.length; i++) {
 				//case of end of list
 				if (i == key1.length - 1) {

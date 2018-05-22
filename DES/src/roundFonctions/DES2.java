@@ -10,12 +10,12 @@ public class DES2 {
 	
 	
 	//DES roundFonction with S-box replaced by E-1 table step
-	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
+	public Boolean[][] DES(Boolean[][] input, Boolean[] key, Boolean decryption) {
 		//initial permutation
 		input = roundFonctionSteps.P(input, 2);
 		
 		//initial key reduction
-		key = roundFonctionSteps.PK1(key);
+		Boolean[] newKey = roundFonctionSteps.PK1(key);
 		
 		//separation in 2 blocks
 		Boolean[][] block1 = java.util.Arrays.copyOfRange(input, 0, 8);
@@ -26,10 +26,10 @@ public class DES2 {
 			Boolean[][] newBlock1 = block2;
 			
 			//prepare key for round
-			key = roundFonctionSteps.rotateKey(key, i);
+			newKey = roundFonctionSteps.rotateKey(newKey, i, decryption);
 			
 			//permute key
-			Boolean[] permutedKey = roundFonctionSteps.PK2(key);
+			Boolean[] permutedKey = roundFonctionSteps.PK2(newKey);
 			
 			// E-Table step
 			Boolean[][] output = roundFonctionSteps.ETable(block2);

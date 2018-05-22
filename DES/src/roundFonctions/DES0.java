@@ -10,7 +10,7 @@ public class DES0 {
 	
 	
 	//original DES roundFonction
-	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
+	public Boolean[][] DES(Boolean[][] input, Boolean[] key, Boolean decryption) {
 		//initial permutation
 		input = roundFonctionSteps.P(input, 2);
 
@@ -26,7 +26,7 @@ public class DES0 {
 			Boolean[][] newBlock1 = block2;
 
 			//prepare key for round
-			newKey = roundFonctionSteps.rotateKey(newKey, i);
+			newKey = roundFonctionSteps.rotateKey(newKey, i, decryption);
 
 			//permute key
 			Boolean[] permutedKey = roundFonctionSteps.PK2(newKey);
