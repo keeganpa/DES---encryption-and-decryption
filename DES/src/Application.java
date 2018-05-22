@@ -38,12 +38,12 @@ public class Application
         DES1 d1 = new DES1();
         DES2 d2 = new DES2();
         DES3 d3 = new DES3();
+        key = padKey();
         
         output += "Plaintext P: " + plaintext;
-        output += "\r\nKey K: " + keyString;
-        
-        key = padKey();
-        int[][] diff = new int[4][17];
+        output += "\r\nKey K: " + plain(key);
+
+        //int[][] diff = new int[4][17];
 
         String output2 = "\r\nAvalanche:\r\nP and Pi under K";
         
@@ -52,34 +52,32 @@ public class Application
             Boolean[][] p = copyInput();
             Boolean[][] pi = copyInput();
             pi[0][0] = !pi[0][0];
-            diff[j][0] = getDifference(p, pi);
-            
-            for(int i = 1; i <= 16; i++)
+            //diff[j][0] = getDifference(p, pi);
+            switch(j)
             {
-                switch(j)
-                {
-                    case 0: p = d0.DES(p, key, false);
-                            pi = d0.DES(pi, key, false);
-                            break;
-                    case 1: p = d1.DES(p, key, false);
-                            pi = d1.DES(pi, key, false);
-                            break;
-                    case 2: p = d2.DES(p, key, false);
-                            pi = d2.DES(pi, key, false);
-                            break;
-                    case 3: p = d3.DES(p, key, false);
-                            pi = d3.DES(pi, key, false);
-                            break;
-                }
-                diff[j][i] = getDifference(p, pi);
+                case 0: p = d0.DES(p, key, false);
+                        pi = d0.DES(pi, key, false);
+                        System.out.println("Ciphertext: " + plaintext(p));
+                        break;
+                case 1: p = d1.DES(p, key, false);
+                        pi = d1.DES(pi, key, false);
+                        break;
+                case 2: p = d2.DES(p, key, false);
+                        pi = d2.DES(pi, key, false);
+                        break;
+                case 3: p = d3.DES(p, key, false);
+                        pi = d3.DES(pi, key, false);
+                        break;
             }
+                //diff[j][i] = getDifference(p, pi);
+            //}
             if(j == 0)
             {
                 output += "\r\nCiphertext C: " + plaintext(p);
                 finalout += "\r\n" + output + output2;
             }
         }
-        finalout += "\r\nRound     DES0     DES1     DES2     DES3";
+        /*finalout += "\r\nRound     DES0     DES1     DES2     DES3";
         for(int i = 0; i < 17; i++)
         {
             String out = ("   " + i);
@@ -108,37 +106,34 @@ public class Application
         average /= 64;
         finalout += "\r\nAverage bit difference: " + average;
         
-        finalout += "\r\n\r\nP under K and Ki";
+        finalout += "\r\n\r\nP under K and Ki";*/
         for(int j = 0; j < 4; j++)
         {
             Boolean[][] p = copyInput();
             Boolean[][] pi = copyInput();
             Boolean[] ki = copyKey();
             ki[1] = !ki[1];
-            diff[j][0] = getDifference(p, pi);
+            //diff[j][0] = getDifference(p, pi);
             
-            for(int i = 1; i <= 16; i++)
+            switch(j)
             {
-                switch(j)
-                {
-                    case 0: p = d0.DES(p, key, false);
-                            pi = d0.DES(pi, ki, false);
-                            break;
-                    case 1: p = d1.DES(p, key, false);
-                            pi = d1.DES(pi, ki, false);
-                            break;
-                    case 2: p = d2.DES(p, key, false);
-                            pi = d2.DES(pi, ki, false);
-                            break;
-                    case 3: p = d3.DES(p, key, false);
-                            pi = d3.DES(pi, ki, false);
-                            break;
-                }
-                diff[j][i] = getDifference(p, pi);
+                case 0: p = d0.DES(p, key, false);
+                        pi = d0.DES(pi, ki, false);
+                        break;
+                case 1: p = d1.DES(p, key, false);
+                        pi = d1.DES(pi, ki, false);
+                        break;
+                case 2: p = d2.DES(p, key, false);
+                        pi = d2.DES(pi, ki, false);
+                        break;
+                case 3: p = d3.DES(p, key, false);
+                        pi = d3.DES(pi, ki, false);
+                        break;
             }
+                //diff[j][i] = getDifference(p, pi);
         }
         finalout += "\r\nRound     DES0     DES1     DES2     DES3";
-        for(int i = 0; i < 17; i++)
+        /*for(int i = 0; i < 17; i++)
         {
             String out = ("   " + i);
             for(int j = 0; j < 4; j++)
@@ -166,7 +161,7 @@ public class Application
         average /= 64;
         finalout += "\r\nAverage bit difference: " + average;
         
-        outputData(args, finalout);
+        outputData(args, finalout);*/
     }
     
     public String plaintext(Boolean[][] input)
@@ -201,17 +196,18 @@ public class Application
         key = padKey();
         System.out.println(plain(key));
         key = reverse(key);
-        System.out.println(plain(key));
         
         for(int i = 0; i <= 16; i++)
         {
             c = d0.DES(c, key, true);
         }
         
+        System.out.println("Plaintext: " + plaintext(c));
+        
         finalout += "\r\nPlaintext P: ";
         finalout += plaintext(c);
         
-        outputData(args, finalout);
+        //outputData(args, finalout);
     }
     
     public Boolean[] reverse(Boolean[] k)
