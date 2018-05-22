@@ -5,11 +5,13 @@ import core.RoundFonctionSteps;
 
 public class DES1 {
 	
+	//class containing common to DES0, DES1, DES2 and DES3
 	private RoundFonctionSteps roundFonctionSteps = new RoundFonctionSteps();
 	
 	
 	//DES roundFonction with missing P
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key) {
+		//initial permutation
 		input = roundFonctionSteps.P(input, 2);
 		
 		//separation in 2 blocks
@@ -17,19 +19,28 @@ public class DES1 {
 		Boolean[][] block2 = java.util.Arrays.copyOfRange(input, 8, 16);
 		
 		for (int i = 0; i < 16; i++) {
+			//prepare switching blocks at the end of the round
 			Boolean[][] newBlock1 = block2;
+			
+			//prepare key for round
+			key = roundFonctionSteps.rotateKey(key, i);
+			
+			//permute key
+			Boolean[] permutedKey = roundFonctionSteps.PK2(key);
+			
 			// E-Table step
 			Boolean[][] output = roundFonctionSteps.ETable(block2);
 			// XOR step
-			output = roundFonctionSteps.XOR(output, key);
+			output = roundFonctionSteps.XOR(output, permutedKey);
 			// S-box step
 			output = roundFonctionSteps.SBox(output);
 			
+			//switch the blocks for next round
 			block2 = roundFonctionSteps.XOR(block1, output);
-			
 			block1 = newBlock1;
 		}
 		
+		//get the blocks together again
 		Boolean[][] output = new Boolean[16][4];
 		output[0] = block1[0];
 		output[1] = block1[1];
@@ -47,6 +58,8 @@ public class DES1 {
 		output[13] = block2[5];
 		output[14] = block2[6];
 		output[15] = block2[7];
+		
+		//final inverse permutation
 		output = roundFonctionSteps.P(output, 3);
 
 		return output;
