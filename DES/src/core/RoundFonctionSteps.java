@@ -2,6 +2,7 @@ package core;
 
 public class RoundFonctionSteps {
 	
+	//all the SBox we need
 	private int [][] SBOX1=
 	    {{14 ,4 ,13 ,1 ,2 ,15 ,11 ,8 ,3 ,10 ,6 ,12 ,5 ,9 ,0 ,7},
 	     {0 ,15 ,7 ,4 ,14 ,2 ,13 ,1 ,10 ,6 ,12 ,11 ,9 ,5 ,3 ,8},
@@ -53,7 +54,8 @@ public class RoundFonctionSteps {
 	    };
 	
 	private int[][][] SBOX = {SBOX1, SBOX2, SBOX3, SBOX4, SBOX5, SBOX6, SBOX7, SBOX8};
-	    
+	
+	//permutation matrix inside rounds
 	private int [][] P={
 			{16 ,7 ,20 ,21},
 			{29, 12, 28, 17},
@@ -65,6 +67,7 @@ public class RoundFonctionSteps {
 		    {22, 11, 4, 25}
 		    };
 	
+	//initial permutation matrix
 	private int[][] IP ={ 
 			{58, 50, 42, 34},
 			{26, 18, 10, 2},
@@ -84,6 +87,7 @@ public class RoundFonctionSteps {
 			{31, 23, 15, 7}
 		};
 	
+	//inversed initial permutation matrix
 	private int[][] IP1={
 			{40, 8, 48, 16},
 			{56, 24, 64, 32},
@@ -103,6 +107,15 @@ public class RoundFonctionSteps {
 			{49, 17, 57, 25}
 		};
 	
+	//permutation matrix 2 for the key
+	private int[] pk2= {14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2,
+			41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32};
+	
+	
+	
+	
+	
+	
 	
 	//ETable step
 	public Boolean[][] ETable(Boolean[][] input) {
@@ -111,14 +124,20 @@ public class RoundFonctionSteps {
 		Boolean[][] output = new Boolean[inputRows][inputCols+2];
 		for (int i = 0; i < inputRows; i++) {
 			for (int j = 0; j < inputCols; j++) {
+				
+				//we include the input matrix inside its output extension
 				output[i][j+1] = input[i][j];
+				
+				//we also fill the column 0 of the extended matrix when j=0
 				if (j == 0) {
 					if (i == 0) {
 						output[i][j] = input[inputRows - 1][inputCols - 1];
 					} else {
 						output[i][j] = input[i-1][inputCols - 1];
 					}
-				} else if (j == inputCols - 1){
+				}
+				//we also fill the last column of the extended matrix when j=numberofcolumn-1
+				else if (j == inputCols - 1){
 					if (i == inputRows - 1) {
 						output[i][j+2] = input[0][inputCols - 1];
 					} else {
@@ -131,17 +150,21 @@ public class RoundFonctionSteps {
 	}
 	
 	//XOR step
+	//xor inside the round (with the key)
 	public Boolean[][] XOR(Boolean[][] input, Boolean[] key) {
 		int inputRows = input.length;
 		int inputCols = input[0].length;
 		Boolean[][] output = new Boolean[inputRows][inputCols];
 		for (int i = 0; i < inputRows; i++) {
 			for (int j = 0; j < inputCols; j++) {
+				
+				//we xor every single element of the input with the corresponding element in  key vector
 				output[i][j] = input[i][j] ^ key[(j + i*inputCols) % 56];
 			}
 		}
 		return output;
 	}
+	//xor at the end of the round between the 2 blocks
 	public Boolean[][] XOR(Boolean[][] block1, Boolean[][] block2) {
 		int inputRows = block1.length;
 		int inputCols = block1[0].length;
@@ -158,16 +181,12 @@ public class RoundFonctionSteps {
 	public Boolean[][] SBox(Boolean[][] input) {
 		int inputRows = input.length;
 		int inputCols = input[0].length;
-		//System.out.println(input.length);
-		//System.out.println(input[0].length);
 		Boolean[][] output = new Boolean[inputRows][inputCols - 2];
 
 		for (int i = 0; i < inputRows; i++) {
 			//We take care of the S-boxes one by one 
 			output[i] = DoSBOX(i, input);
 		}
-		//System.out.println(output.length);
-		//System.out.println(output[0].length);
 		return output;
 	}
 	
@@ -175,8 +194,14 @@ public class RoundFonctionSteps {
 	private Boolean[] DoSBOX(int i, Boolean[][] input) {
 		int inputCols = input[0].length;
 		Boolean[] line = {false, false, false, false};
+		
+		//dimension 1: i sbox to use
+		//dimension 2: row of the sboxi to use (get with bits 0 and 6 of the row(i) in input)
+		//dimension 3: column of the sboxi to use (get with bits 1, 2, 3, 4 of the row(i) in input)
 		int num = SBOX[i][2*boolToInt(input[i][0])+boolToInt(input[i][input[0].length-1])%SBOX[0].length][(8*boolToInt(input[i][1])+4*boolToInt(input[i][2])+2*boolToInt(input[i][3])+boolToInt(input[i][0]))%SBOX[0][0].length];
 		for (int j = 0; j < inputCols - 2; j++ ) {
+			
+			//putting the right value in line
 			if (num/(Math.pow(2, 3 - j)) > 1) {
 				if (j<4) {
 					line[j] = true;
@@ -196,6 +221,8 @@ public class RoundFonctionSteps {
 		Boolean[][] output = new Boolean[inputRows][inputCols - 2];
 		for (int i = 0; i < inputRows; i++) {
 			for (int j = 0; j < inputCols - 2; j++) {
+				
+				//just removing first and last columns by not putting them in a smaller matrix
 				output[i][j] = input[i][j+1];
 			}
 		}
@@ -209,31 +236,106 @@ public class RoundFonctionSteps {
 		Boolean[][] output = new Boolean[inputRows][inputCols];
 		for (int i = 0; i < inputRows; i++) {
 			for (int j = 0; j < inputCols; j++) {
+				
+				//num to define which permutation matrix to use
 				int num;
+				//to have get the number corresponding to a permutation
 				switch (permutation) {
 					case 1:
+						//1 for the inside round permutation
 						num = P[i][j] - 1;
 						break;
 					case 2:
+						//2 for the initial permutation
 						num = IP[i][j] - 1;
 						break;
 					case 3:
+						//3 for the reverse initial permutation
 						num = IP1[i][j] - 1;
 						break;
 					default:
 						num = 0;
 						break;
 				}
+				
+				//now that we have the number where we are supposed to take the the result in the input,
+				//we can fill the output
 				output[i][j] = input[(num - num % inputCols) / inputCols][num % inputCols];
 			}
 		}
 		return output;
 	}
 	
+	//rotation of the key
+	public Boolean[] rotateKey(Boolean[] key, int round) {
+		Boolean[] key1 = java.util.Arrays.copyOfRange(key, 0, key.length/2);
+		Boolean[] key2 = java.util.Arrays.copyOfRange(key, key.length/2, key.length);
+		Boolean[] newKey1 = new Boolean[key1.length];
+		Boolean[] newKey2 = new Boolean[key2.length];
+		Boolean[] newKey = new Boolean[key.length];
+		//for the left shift by one bit
+		if (round == 0 || round == 1 || round == 8 || round == 15) {
+			for (int i = 0; i < key1.length; i++) {
+				//case of end of list
+				if (i == key1.length - 1) {
+					newKey1[key1.length - 1] = key1[0];
+					newKey2[key2.length - 1] = key2[0];
+				}
+				//common case
+				else {
+					newKey1[i] = key1[i + 1];
+					newKey2[i] = key2[i + 1];
+				}
+			}
+			//filling the new key
+			for (int i = 0; i < key1.length; i++) {
+				newKey[i] = newKey1[i];
+				newKey[i + newKey1.length] = newKey2[i];
+			}
+		}
+		//for the left shift by two bits
+		else {
+			for (int i = 0; i < key1.length; i++) {
+				//case of end of list
+				if (i == key1.length - 2) {
+					newKey1[key1.length - 2] = key1[0];
+					newKey2[key2.length - 2] = key2[0];
+				} else if (i == key1.length - 1){
+					newKey1[key1.length - 1] = key1[1];
+					newKey2[key2.length - 1] = key2[1];
+				}
+				//common case
+				else {
+					newKey1[i] = key1[i + 2];
+					newKey2[i] = key2[i + 2];
+				}
+			}
+			//filling the new key
+			for (int i = 0; i < key1.length; i++) {
+				newKey[i] = newKey1[i];
+				newKey[i + newKey1.length] = newKey2[i];
+			}
+		}
+		return newKey;
+	}
+	
+	//permutation 2 of the key
+	public Boolean[] PK2(Boolean[] key) {
+		Boolean[] newKey = key;
+		//filling the new key element by element
+		for (int i = 0; i < pk2.length; i++) {
+			int num = pk2[i] - 1;
+			newKey[i] = key[num];
+		}
+		return newKey;
+	}
+	
+	
+	
 		
 		
 		
-		
+	//https://stackoverflow.com/questions/3793650/convert-boolean-to-int-in-java
 	public int boolToInt(boolean b) {
 	    return b ? 1 : 0;
 	}
