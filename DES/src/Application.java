@@ -58,17 +58,17 @@ public class Application
             {
                 switch(j)
                 {
-                    case 0: p = d0.DES(p, key);
-                            pi = d0.DES(pi, key);
+                    case 0: p = d0.DES(p, key, false);
+                            pi = d0.DES(pi, key, false);
                             break;
-                    case 1: p = d1.DES(p, key);
-                            pi = d1.DES(pi, key);
+                    case 1: p = d1.DES(p, key, false);
+                            pi = d1.DES(pi, key, false);
                             break;
-                    case 2: p = d2.DES(p, key);
-                            pi = d2.DES(pi, key);
+                    case 2: p = d2.DES(p, key, false);
+                            pi = d2.DES(pi, key, false);
                             break;
-                    case 3: p = d3.DES(p, key);
-                            pi = d3.DES(pi, key);
+                    case 3: p = d3.DES(p, key, false);
+                            pi = d3.DES(pi, key, false);
                             break;
                 }
                 diff[j][i] = getDifference(p, pi);
@@ -121,17 +121,17 @@ public class Application
             {
                 switch(j)
                 {
-                    case 0: p = d0.DES(p, key);
-                            pi = d0.DES(pi, ki);
+                    case 0: p = d0.DES(p, key, false);
+                            pi = d0.DES(pi, ki, false);
                             break;
-                    case 1: p = d1.DES(p, key);
-                            pi = d1.DES(pi, ki);
+                    case 1: p = d1.DES(p, key, false);
+                            pi = d1.DES(pi, ki, false);
                             break;
-                    case 2: p = d2.DES(p, key);
-                            pi = d2.DES(pi, ki);
+                    case 2: p = d2.DES(p, key, false);
+                            pi = d2.DES(pi, ki, false);
                             break;
-                    case 3: p = d3.DES(p, key);
-                            pi = d3.DES(pi, ki);
+                    case 3: p = d3.DES(p, key, false);
+                            pi = d3.DES(pi, ki, false);
                             break;
                 }
                 diff[j][i] = getDifference(p, pi);
@@ -199,11 +199,13 @@ public class Application
         finalout += "\r\nKey K: ";
         finalout += keyString;
         key = padKey();
+        System.out.println(plain(key));
         key = reverse(key);
+        System.out.println(plain(key));
         
         for(int i = 0; i <= 16; i++)
         {
-            c = d0.DES(c, key);
+            c = d0.DES(c, key, true);
         }
         
         finalout += "\r\nPlaintext P: ";
@@ -221,6 +223,23 @@ public class Application
             k[k.length-i-1] = temp;
         }
         return k;
+    }
+    
+    public String plain(Boolean[] k)
+    {
+        String s = "";
+        for(int i = 0; i < k.length; i++)
+        {
+            if(k[i] == true)
+            {
+                s += "1";
+            }
+            else
+            {
+                s += "0";
+            }
+        }
+        return s;
     }
     
     public void outputData(String[] args, String output)
