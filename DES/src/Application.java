@@ -184,6 +184,7 @@ public class Application
             }
         }
         
+
         //Used to generate avalanche effect information for k and ki
         //Loops for each version of DES
         for(int i = 0; i < 4; i++)
@@ -273,6 +274,7 @@ public class Application
         return pi;
     }
     
+
     //Produces matrix of keys, each with 1 bit different from original
     public Boolean[][] getKi()
     {
