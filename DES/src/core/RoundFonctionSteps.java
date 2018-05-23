@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.lang.Math;
 
 public class RoundFonctionSteps {
+    
     //all the SBox we need
     private int [][] SBOX1=
         {{14 ,4 ,13 ,1 ,2 ,15 ,11 ,8 ,3 ,10 ,6 ,12 ,5 ,9 ,0 ,7},
@@ -200,24 +201,7 @@ public class RoundFonctionSteps {
         int inputCols = input[0].length;
         Boolean[] line = {false, false, false, false};
         
-        //dimension 1: i sbox to use
-        //dimension 2: row of the sboxi to use (get with bits 0 and 6 of the row(i) in input)
-        //dimension 3: column of the sboxi to use (get with bits 1, 2, 3, 4 of the row(i) in input)
-        /*int num = SBOX[i][2*boolToInt(input[i][0])+boolToInt(input[i][input[0].length-1])%SBOX[0].length][(8*boolToInt(input[i][1])+4*boolToInt(input[i][2])+2*boolToInt(input[i][3])+boolToInt(input[i][0]))%SBOX[0][0].length];
-        //System.out.println(num);
-        for (int j = 0; j < inputCols - 2; j++ ) {
-            //System.out.println(num);
-            //putting the right value in line
-            if (num/(Math.pow(2, 3 - j)) > 1) {
-                if (j<4) {
-                    line[j] = true;
-                } else {
-                    line[0] = true;
-                }
-                num -= Math.pow(2, 3 - j);
-            }
-        }*/
-        //System.out.println(Arrays.toString(line));
+        //Takes the first and last bit, and the 4 middle bits seperately
         int[] l = new int[2];
         int[] j = new int[4];
         l[0] = boolToInt(input[i][0]);
@@ -227,10 +211,12 @@ public class RoundFonctionSteps {
         j[2] = boolToInt(input[i][3]);
         j[3] = boolToInt(input[i][4]);
         
+        //Get the S-BOX value to call
         int x = binaryToInt(l);
         int y = binaryToInt(j);
         int z = SBOX[i][x][y];
         
+        //Adds leading zeroes as needed so string is 4 bits long
         String s = Integer.toBinaryString(z);
         String fill = "";
         if(s.length() == 1)
@@ -249,6 +235,7 @@ public class RoundFonctionSteps {
         fill += s;
         String[] split = fill.split("");
         
+        //Generates output for current S-BOX
         for(int w = 0; w < 4; w++)
         {
             if(split[w].equals("0"))
@@ -263,6 +250,7 @@ public class RoundFonctionSteps {
         return line;
     }
     
+    //Method to convery array of bits to integer
     public int binaryToInt(int[] x)
     {
         int result = 0;
