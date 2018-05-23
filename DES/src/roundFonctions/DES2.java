@@ -46,31 +46,18 @@ public class DES2 {
 			output = roundFonctionSteps.E1Table(output);
 			// permutation step
 			output = roundFonctionSteps.P(output, 1);
-			diff[i+1] = plaintext(output);
 			
 			//switch the blocks for next round
 			block2 = roundFonctionSteps.XOR(block1, output);
 			block1 = newBlock1;
+			
+			//Add current iteration of message to string array
+			Boolean[][] temp = joinBlocks(block1, block2);
+            diff[i+1] = plaintext(temp);
 		}
 		
 		//get the blocks together again
-		Boolean[][] output = new Boolean[16][4];
-		output[0] = block2[0];
-		output[1] = block2[1];
-		output[2] = block2[2];
-		output[3] = block2[3];
-		output[4] = block2[4];
-		output[5] = block2[5];
-		output[6] = block2[6];
-		output[7] = block2[7];
-		output[8] = block1[0];
-		output[9] = block1[1];
-		output[10] = block1[2];
-		output[11] = block1[3];
-		output[12] = block1[4];
-		output[13] = block1[5];
-		output[14] = block1[6];
-		output[15] = block1[7];
+		Boolean[][] output = joinBlocks(block1, block2);
 		
 		//final inverse permutation
 		output = roundFonctionSteps.P(output, 3);
@@ -78,14 +65,39 @@ public class DES2 {
 
 		return output;
 	}
+	
+	//Method to join blocks back together
+	public Boolean[][] joinBlocks(Boolean[][] block1, Boolean[][] block2)
+    {
+        Boolean[][] output = new Boolean[16][4];
+        output[0] = block2[0];
+        output[1] = block2[1];
+        output[2] = block2[2];
+        output[3] = block2[3];
+        output[4] = block2[4];
+        output[5] = block2[5];
+        output[6] = block2[6];
+        output[7] = block2[7];
+        output[8] = block1[0];
+        output[9] = block1[1];
+        output[10] = block1[2];
+        output[11] = block1[3];
+        output[12] = block1[4];
+        output[13] = block1[5];
+        output[14] = block1[6];
+        output[15] = block1[7];
+        return output;
+    }
 
-	public String plaintext(Boolean[][] input)
+	//Converts Boolean[][] object to binary written in string
+    public String plaintext(Boolean[][] input)
     {
         String output = "";
         for(int i = 0; i < input.length; i++)
         {
             for(int j = 0; j < input[0].length; j++)
             {
+                //Adds 0 to string for false values, 1 for true
                 if(input[i][j] == false)
                 {
                     output += "0";
@@ -99,6 +111,7 @@ public class DES2 {
         return output;
     }
     
+    //Returns string with values of message at end of each round
     public String[] diffCheck()
     {
         return diff;
