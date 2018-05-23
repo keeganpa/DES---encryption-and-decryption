@@ -8,14 +8,27 @@ public class DES2 {
 	//class containing common to DES0, DES1, DES2 and DES3
 	private RoundFonctionSteps roundFonctionSteps = new RoundFonctionSteps();
 	
+	//String array used for checking difference in bits
+    private String[] diff;
 	
 	//DES roundFonction with S-box replaced by E-1 table step
 	public Boolean[][] DES(Boolean[][] input, Boolean[] key, Boolean decryption) {
-		//initial permutation
+		diff = new String[17];
+		diff[0] = plaintext(input);
+	    
+	    //initial permutation
 		input = roundFonctionSteps.P(input, 2);
 		
 		//initial key reduction
 		Boolean[] newKey = roundFonctionSteps.PK1(key);
+		Boolean[][] permutedKeys = new Boolean[16][48];
+        
+        for(int i = 0; i < 16; i++)
+        {
+            newKey = roundFonctionSteps.rotateKey(newKey, i, false);
+            Boolean[] permutedKey = roundFonctionSteps.PK2(newKey);
+            permutedKeys[i] = permutedKey;
+        }
 		
 		//separation in 2 blocks
 		Boolean[][] block1 = java.util.Arrays.copyOfRange(input, 0, 8);
@@ -25,20 +38,15 @@ public class DES2 {
 			//prepare switching blocks at the end of the round
 			Boolean[][] newBlock1 = block2;
 			
-			//prepare key for round
-			newKey = roundFonctionSteps.rotateKey(newKey, i, decryption);
-			
-			//permute key
-			Boolean[] permutedKey = roundFonctionSteps.PK2(newKey);
-			
 			// E-Table step
 			Boolean[][] output = roundFonctionSteps.ETable(block2);
 			// XOR step
-			output = roundFonctionSteps.XOR(output, permutedKey);
+			output = roundFonctionSteps.XOR(output, permutedKeys[i]);
 			// E-1-Table step
 			output = roundFonctionSteps.E1Table(output);
 			// permutation step
 			output = roundFonctionSteps.P(output, 1);
+			diff[i+1] = plaintext(output);
 			
 			//switch the blocks for next round
 			block2 = roundFonctionSteps.XOR(block1, output);
@@ -66,8 +74,33 @@ public class DES2 {
 		
 		//final inverse permutation
 		output = roundFonctionSteps.P(output, 3);
+		diff[16] = plaintext(output);
 
 		return output;
 	}
 
+	public String plaintext(Boolean[][] input)
+    {
+        String output = "";
+        for(int i = 0; i < input.length; i++)
+        {
+            for(int j = 0; j < input[0].length; j++)
+            {
+                if(input[i][j] == false)
+                {
+                    output += "0";
+                }
+                else
+                {
+                    output += "1";
+                }
+            }
+        }
+        return output;
+    }
+    
+    public String[] diffCheck()
+    {
+        return diff;
+    }
 }
