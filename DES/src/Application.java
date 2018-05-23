@@ -127,6 +127,90 @@ public class Application
             }
             finalout += "\r\n" + out;
         }
+        
+        String output3 = "\r\nAvalanche:\r\nP and P under Ki";
+        String[][] kResults = new String[4][17];
+        
+        for(int j = 0; j < 4; j++)
+        {
+            Boolean[][] p = copyInput();
+            switch(j)
+            {
+                case 0: p = d0.DES(p, key, false);
+                        kResults[0] = d0.diffCheck();
+                        break;
+                case 1: p = d1.DES(p, key, false);
+                        kResults[1] = d1.diffCheck();
+                        break;
+                case 2: p = d2.DES(p, key, false);
+                        kResults[2] = d2.diffCheck();
+                        break;
+                case 3: p = d3.DES(p, key, false);
+                        kResults[3] = d3.diffCheck();
+                        break;
+            }
+            if(j == 0)
+            {
+                finalout += "\r\n" + output3;
+            }
+        }
+        
+        String[][][] kiResults = new String[56][4][17];
+        for(int i = 0; i < 56; i ++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+            	Boolean[][] p = copyInput();
+            	Boolean[][][] pi = getPi();
+                Boolean[][] ki = getKi();
+                switch(j)
+                {
+                    case 0: pi[i] = d0.DES(p, ki[i], false);
+                    		kiResults[i][0] = d0.diffCheck();
+                            break;
+                    case 1: pi[i] = d1.DES(p, ki[i], false);
+                    		kiResults[i][1] = d1.diffCheck();
+                            break;
+                    case 2: pi[i] = d2.DES(p, ki[i], false);
+                    		kiResults[i][2] = d2.diffCheck();
+                            break;
+                    case 3: pi[i] = d3.DES(p, ki[i], false);
+                    		kiResults[i][3] = d3.diffCheck();
+                            break;
+                }
+            }
+        }
+        
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 0; j < 17; j++)
+            {
+                int count = 0;
+                for(int z = 0; z < 56; z++)
+                {
+                    count += getDifference(pResults[i][j], piResults[z][i][j]);
+                }
+                count /= 56;
+                diff[i][j] = count;
+            }
+        }
+        finalout += "\r\nRound     DES0     DES1     DES2     DES3";
+        for(int i = 0; i < 17; i++)
+        {
+            String out = ("   " + i);
+            for(int j = 0; j < 4; j++)
+            {
+                if(j == 0)
+                {
+                    out += (space(0, i)) + diff[j][i];
+                }
+                else
+                {
+                    out += (space(1, diff[j-1][i])) + diff[j][i];
+                }
+            }
+            finalout += "\r\n" + out;
+        }
         System.out.println(finalout);
     }
     
@@ -148,6 +232,23 @@ public class Application
             }
         }
         return pi;
+    }
+    
+    public Boolean[][] getKi()
+    {
+        Boolean[][] ki = new Boolean[56][56];
+        for(int i = 0; i < 56; i++)
+        {
+            ki[i] = copyInput2();
+        }
+        
+        int c = 0;
+        for(int i = 0; i < 56; i++)
+        {
+            ki[c][i] = !ki[c][i];
+            c++;
+        }
+        return ki;
     }
     
     public String plaintext(Boolean[][] input)
@@ -303,6 +404,19 @@ public class Application
     public Boolean[][] copyInput()
     {
         Boolean[][] copy = new Boolean[16][4];
+        for(int i = 0; i < 16; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                 copy[i][j] = input[i][j];   
+            }
+        }
+        return copy;
+    }
+    
+    public Boolean[][] copyInput2()
+    {
+        Boolean[] copy = new Boolean[56];
         for(int i = 0; i < 16; i++)
         {
             for(int j = 0; j < 4; j++)
