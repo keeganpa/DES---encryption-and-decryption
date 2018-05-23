@@ -25,6 +25,7 @@ public class DES0 {
         Boolean[] newKey = roundFonctionSteps.PK1(key);
         Boolean[][] permutedKeys = new Boolean[16][48];
         
+        //Creates an array holding all subkeys
         for(int i = 0; i < 16; i++)
         {
             newKey = roundFonctionSteps.rotateKey(newKey, i, false);
@@ -32,6 +33,7 @@ public class DES0 {
             permutedKeys[i] = permutedKey;
         }
 
+        //Reverses order of subkeys if decrypting
         if(decryption == true)
         {
             permutedKeys = reverse(permutedKeys);
@@ -56,15 +58,30 @@ public class DES0 {
 
             // permutation step
             output = roundFonctionSteps.P(output, 1);
-            diff[i+1] = plaintext(output);
-            
+
             //switch the blocks for next round
             block2 = roundFonctionSteps.XOR(block1, output);
-            block1 = newBlock1;     
+            block1 = newBlock1;
+            
+            //Add current iteration of message to string array
+            Boolean[][] temp = joinBlocks(block1, block2);
+            diff[i+1] = plaintext(temp);
         }
         
         
         //get the blocks together again
+        Boolean[][] output = joinBlocks(block1, block2);
+        
+        //final inverse permutation
+        output = roundFonctionSteps.P(output, 3);
+        diff[16] = plaintext(output);
+
+        return output;
+    }
+    
+    //Method to join blocks back together
+    public Boolean[][] joinBlocks(Boolean[][] block1, Boolean[][] block2)
+    {
         Boolean[][] output = new Boolean[16][4];
         output[0] = block2[0];
         output[1] = block2[1];
@@ -82,14 +99,10 @@ public class DES0 {
         output[13] = block1[5];
         output[14] = block1[6];
         output[15] = block1[7];
-        
-        //final inverse permutation
-        output = roundFonctionSteps.P(output, 3);
-        diff[16] = plaintext(output);
-
         return output;
     }
     
+    //Method used to reverse subkeys for decryption
     public Boolean[][] reverse(Boolean[][] k)
     {
         for(int i = 0; i < (k.length)/2; i++)
@@ -101,6 +114,7 @@ public class DES0 {
         return k;
     }
     
+    //Converts Boolean[][] object to binary written in string
     public String plaintext(Boolean[][] input)
     {
         String output = "";
@@ -108,6 +122,7 @@ public class DES0 {
         {
             for(int j = 0; j < input[0].length; j++)
             {
+                //Adds 0 to string for false values, 1 for true
                 if(input[i][j] == false)
                 {
                     output += "0";
@@ -121,6 +136,7 @@ public class DES0 {
         return output;
     }
     
+    //Returns string with values of message at end of each round
     public String[] diffCheck()
     {
         return diff;
