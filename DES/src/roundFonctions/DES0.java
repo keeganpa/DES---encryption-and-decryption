@@ -8,12 +8,18 @@ public class DES0 {
     //class containing common to DES0, DES1, DES2 and DES3
     private RoundFonctionSteps roundFonctionSteps = new RoundFonctionSteps();
     
+    //String array used for checking difference in bits
+    private String[] diff;
+    
     
     //original DES roundFonction
     public Boolean[][] DES(Boolean[][] input, Boolean[] key, Boolean decryption) {
+  
+        diff = new String[17];
+        diff[0] = plaintext(input);
+        
         //initial permutation
         input = roundFonctionSteps.P(input, 2);
-        
 
         //initial key reduction
         Boolean[] newKey = roundFonctionSteps.PK1(key);
@@ -50,10 +56,11 @@ public class DES0 {
 
             // permutation step
             output = roundFonctionSteps.P(output, 1);
+            diff[i+1] = plaintext(output);
             
             //switch the blocks for next round
             block2 = roundFonctionSteps.XOR(block1, output);
-            block1 = newBlock1;
+            block1 = newBlock1;     
         }
         
         
@@ -78,6 +85,7 @@ public class DES0 {
         
         //final inverse permutation
         output = roundFonctionSteps.P(output, 3);
+        diff[16] = plaintext(output);
 
         return output;
     }
@@ -91,5 +99,30 @@ public class DES0 {
             k[k.length-i-1] = temp;
         }
         return k;
+    }
+    
+    public String plaintext(Boolean[][] input)
+    {
+        String output = "";
+        for(int i = 0; i < input.length; i++)
+        {
+            for(int j = 0; j < input[0].length; j++)
+            {
+                if(input[i][j] == false)
+                {
+                    output += "0";
+                }
+                else
+                {
+                    output += "1";
+                }
+            }
+        }
+        return output;
+    }
+    
+    public String[] diffCheck()
+    {
+        return diff;
     }
 }
