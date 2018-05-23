@@ -38,46 +38,79 @@ public class Application
         DES1 d1 = new DES1();
         DES2 d2 = new DES2();
         DES3 d3 = new DES3();
-        key = padKey();
+        //key = padKey();
         
         output += "Plaintext P: " + plaintext;
         output += "\r\nKey K: " + plain(key);
 
-        //int[][] diff = new int[4][17];
+        int[][] diff = new int[4][17];
 
         String output2 = "\r\nAvalanche:\r\nP and Pi under K";
+        String[][] pResults = new String[4][17];
         
         for(int j = 0; j < 4; j++)
         {
             Boolean[][] p = copyInput();
-            Boolean[][] pi = copyInput();
-            pi[0][0] = !pi[0][0];
-            //diff[j][0] = getDifference(p, pi);
             switch(j)
             {
                 case 0: p = d0.DES(p, key, false);
-                        //pi = d0.DES(pi, key, false);
-                        System.out.println("Ciphertext: " + plaintext(p));
+                        pResults[0] = d0.diffCheck();
                         break;
                 case 1: p = d1.DES(p, key, false);
-                        pi = d1.DES(pi, key, false);
+                        pResults[1] = d1.diffCheck();
                         break;
                 case 2: p = d2.DES(p, key, false);
-                        pi = d2.DES(pi, key, false);
+                        pResults[2] = d2.diffCheck();
                         break;
                 case 3: p = d3.DES(p, key, false);
-                        pi = d3.DES(pi, key, false);
+                        pResults[3] = d3.diffCheck();
                         break;
             }
-                //diff[j][i] = getDifference(p, pi);
-            //}
             if(j == 0)
             {
                 output += "\r\nCiphertext C: " + plaintext(p);
                 finalout += "\r\n" + output + output2;
             }
         }
-        /*finalout += "\r\nRound     DES0     DES1     DES2     DES3";
+        
+        String[][][] piResults = new String[64][4][17];
+        for(int i = 0; i < 64; i ++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                Boolean[][][] pi = getPi();
+                switch(j)
+                {
+                    case 0: pi[i] = d0.DES(pi[i], key, false);
+                            piResults[i][0] = d0.diffCheck();
+                            break;
+                    case 1: pi[i] = d1.DES(pi[i], key, false);
+                            piResults[i][1] = d1.diffCheck();
+                            break;
+                    case 2: pi[i] = d2.DES(pi[i], key, false);
+                            piResults[i][2] = d2.diffCheck();
+                            break;
+                    case 3: pi[i] = d3.DES(pi[i], key, false);
+                            piResults[i][3] = d3.diffCheck();
+                            break;
+                }
+            }
+        }
+        
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 0; j < 17; j++)
+            {
+                int count = 0;
+                for(int z = 0; z < 64; z++)
+                {
+                    count += getDifference(pResults[i][j], piResults[z][i][j]);
+                }
+                count /= 64;
+                diff[i][j] = count;
+            }
+        }
+        finalout += "\r\nRound     DES0     DES1     DES2     DES3";
         for(int i = 0; i < 17; i++)
         {
             String out = ("   " + i);
@@ -94,74 +127,27 @@ public class Application
             }
             finalout += "\r\n" + out;
         }
+        System.out.println(finalout);
+    }
+    
+    public Boolean[][][] getPi()
+    {
+        Boolean[][][] pi = new Boolean[64][16][4];
+        for(int i = 0; i < 64; i++)
+        {
+            pi[i] = copyInput();
+        }
         
-        double average = 0;
-        for(int i = 1; i < 17; i++)
+        int c = 0;
+        for(int i = 0; i < 16; i++)
         {
             for(int j = 0; j < 4; j++)
             {
-                average += diff[j][i];
+                pi[c][i][j] = !pi[c][i][j];
+                c++;
             }
         }
-        average /= 64;
-        finalout += "\r\nAverage bit difference: " + average;
-        
-        finalout += "\r\n\r\nP under K and Ki";*/
-        /*for(int j = 0; j < 4; j++)
-        {
-            Boolean[][] p = copyInput();
-            Boolean[][] pi = copyInput();
-            Boolean[] ki = copyKey();
-            ki[1] = !ki[1];
-            //diff[j][0] = getDifference(p, pi);
-            
-            switch(j)
-            {
-                case 0: p = d0.DES(p, key, false);
-                        pi = d0.DES(pi, ki, false);
-                        break;
-                case 1: p = d1.DES(p, key, false);
-                        pi = d1.DES(pi, ki, false);
-                        break;
-                case 2: p = d2.DES(p, key, false);
-                        pi = d2.DES(pi, ki, false);
-                        break;
-                case 3: p = d3.DES(p, key, false);
-                        pi = d3.DES(pi, ki, false);
-                        break;
-            }
-                //diff[j][i] = getDifference(p, pi);
-        }*/
-        finalout += "\r\nRound     DES0     DES1     DES2     DES3";
-        /*for(int i = 0; i < 17; i++)
-        {
-            String out = ("   " + i);
-            for(int j = 0; j < 4; j++)
-            {
-                if(j == 0)
-                {
-                    out += (space(0, i)) + diff[j][i];
-                }
-                else
-                {
-                    out += (space(1, diff[j-1][i])) + diff[j][i];
-                }
-            }
-            finalout += "\r\n" + out;
-        }
-        
-        average = 0;
-        for(int i = 1; i < 17; i++)
-        {
-            for(int j = 0; j < 4; j++)
-            {
-                average += diff[j][i];
-            }
-        }
-        average /= 64;
-        finalout += "\r\nAverage bit difference: " + average;
-        
-        outputData(args, finalout);*/
+        return pi;
     }
     
     public String plaintext(Boolean[][] input)
@@ -369,17 +355,16 @@ public class Application
         return padded;
     }
     
-    public int getDifference(Boolean[][] p, Boolean[][] pi)
+    public int getDifference(String p, String pi)
     {
         int count = 0;
-        for(int i = 0; i < p.length; i++)
+        String[] s = p.split("");
+        String[] t = pi.split("");
+        for(int i = 0; i < s.length; i++)
         {
-            for(int j = 0; j < p[0].length; j++)
+            if(!s[i].equals(t[i]))
             {
-                 if(p[i][j] != pi[i][j])
-                 {
-                     count++;
-                 }
+                count++;
             }
         }
         return count;
