@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.lang.Math;
 
 public class RoundFonctionSteps {
-    
     //all the SBox we need
     private int [][] SBOX1=
         {{14 ,4 ,13 ,1 ,2 ,15 ,11 ,8 ,3 ,10 ,6 ,12 ,5 ,9 ,0 ,7},
